@@ -90,12 +90,11 @@ void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnorDi) {
  * @return            -  none
  *
  * @Note              -  none
-
  */
 
 void GPIO_Init(GPIO_Handle_t *pGPIOHandle) {
 	uint32_t temp;
-	// 1. Configure mode of pin (interrupt vs non-interrupt)
+	// 1. Configure mode of pin (interrupt vs no-interrupt)
 	if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode <= GPIO_MODE_ANALOG) {
 		// Get value of pin in mode register
 		// set it to right value
@@ -131,7 +130,6 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle) {
 
 		// Enable EXTI interrupt delivery using IMR
 		EXTI->IMR1 |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-
 	}
 
 	// 2. Configure speed
@@ -146,17 +144,16 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle) {
 	pGPIOHandle->pGPIOx->PUPDR |= temp;
 
 	// 4. Configure OPtype
-	// Leftshift by 1 per pinnumber
+	// Leftshift by 1 per pin Number
 	temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinOPType << (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
 	pGPIOHandle->pGPIOx->OTYPER &= ~(0x3 << (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
 	pGPIOHandle->pGPIOx->OTYPER |= temp;
 
 	// 5. Configure alt functionality
 	if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_ALTFN) {
-		/*
-		 * configure alternate functionality
-		 * Check the functionalities available with respect to the AF and the pin number
-		 * */
+		 // configure alternate functionality
+		 // Check the functionalities available with respect to the AF and the pin number
+
 
 		// 0/1 (which special register)
 		uint8_t temp1 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber/8;
@@ -219,6 +216,7 @@ void GPIO_DeInit(GPIO_RegDef_t *pGPIOx) {
  *
  * @Note              - Reads the value from the input pin
  */
+
 uint8_t GPIO_ReadFromInputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber) {
 	uint8_t value;
 	// Right shift with pin number, mask and cast
@@ -258,6 +256,7 @@ uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t *pGPIOx) {
  *
  * @Note              - Writes to 1 bit in ODR register
  */
+
 void GPIO_WriteToOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber, uint8_t Value) {
 	if (Value == GPIO_PIN_SET) {
 		pGPIOx->ODR |= (1 << PinNumber);
@@ -279,6 +278,7 @@ void GPIO_WriteToOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber, uint8_t Val
  *
  * @Note              - Writes entire ODR register for that port. So uint16 is used.
  */
+
 void GPIO_WriteToOutputPort(GPIO_RegDef_t *pGPIOx, uint16_t Value) {
 	pGPIOx->ODR = (Value);
 }
@@ -296,36 +296,56 @@ void GPIO_WriteToOutputPort(GPIO_RegDef_t *pGPIOx, uint16_t Value) {
  *
  * @Note              - Changes output state of the GPIO pin
  */
+
 void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber) {
 	// Change output to what it previously was not.
 	// Use xor
 	pGPIOx->ODR = ((pGPIOx->ODR) ^= (1<<PinNumber));
 }
 
-void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t EnorDi) {
+void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t EnorDi) {
 	// NOTE: max 90 interrupts
 	if (EnorDi == ENABLE) {
 		if (IRQNumber <= 31) {
-			// 0 register
+			*NVIC_ISER0 |= (1 << IRQNumber);
 		}
 		else if ((IRQNumber>31) && (IRQNumber<64)) {
-
+			*NVIC_ISER1 |= (1 << IRQNumber);
 		}
 		else if ((IRQNumber>=64 && (IRQNumber<96))) {
-
+			*NVIC_ISER2 |= (1 << IRQNumber);
 		}
 	}
 	else {
 		if (IRQNumber <= 31) {
-			// 0 register
+			*NVIC_ICER0 |= (1 << IRQNumber);
 		}
 		else if ((IRQNumber>31) && (IRQNumber<64)) {
-
+			*NVIC_ICER1 |= (1 << IRQNumber);
 		}
 		else if ((IRQNumber>=64 && (IRQNumber<96))) {
-
+			*NVIC_ICER2 |= (1 << IRQNumber);
 		}
 	}
 }
 
-void GPIO_IRQHandling(uint8_t PinNumber);
+
+void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority) {
+	uint8_t iprx = IRQNumber / 4;
+	uint8_t iprx_section = IRQNumber % 4;
+	// Interrupt priority register:
+	// Only 4 bits are implemented for priority
+	// So make sure you have to skip the initial bits that aren^t implemented to modify the implemented ones.
+	uint8_t shift_amount =(8 * iprx_section) + (8 - NO_PR_BITS_IMPLEMENTED);
+	*(NVIC_PR_BASE_ADDR + iprx*4) |= (IRQPriority << shift_amount);
+}
+
+// 2 pending register: EXTI and NVIC
+// Interrupt service routine saved at address shown in vector table.
+// Called by the IRQ handler which is application specific!
+void GPIO_IRQHandler(uint8_t PinNumber) {
+	// Clear the exti pr register corresponding to pin register
+	if ((EXTI->PR1) & (1<<PinNumber)) {
+		EXTI->PR1 |= (1<<PinNumber); // Selected trigger request occurred
+	}
+}

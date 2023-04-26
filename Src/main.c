@@ -4,6 +4,7 @@
 #include <string.h>
 #include "stm32f446xx.h"
 #include "stm32f446xx_gpio_driver.h"
+#include "stm32f446xx_spi_driver.h"
 
 void delay(void) {
 	for (int i=0; i< 5000000; i++) {
@@ -12,9 +13,13 @@ void delay(void) {
 }
 
 
+// Initialize SPI to the pins that you can find
+
 int main() {
 	// NOTE: PC13 is the button
 	// PB13
+
+
 	GPIO_Handle_t GPIOled;
 	GPIOled.GPIO_PinConfig.GPIO_PinNumber = 13;
 	GPIOled.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_OUT;

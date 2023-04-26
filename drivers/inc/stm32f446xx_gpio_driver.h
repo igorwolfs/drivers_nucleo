@@ -4,23 +4,22 @@
 
 typedef struct {
 	uint8_t GPIO_PinNumber;
-	uint8_t GPIO_PinMode;			/*!< possible values from @GPIO_PIN_MODES >*/
-	uint8_t GPIO_PinSpeed;			/*!< possible values from @GPIO_PIN_SPEED >*/
-	uint8_t GPIO_PinPuPdControl;	/*!< possible values from @GPIO_PIN_PU/PD control >*/
-	uint8_t GPIO_PinOPType;			/*!< possible values from @GPIO_PINOPType >*/
-	uint8_t GPIO_PinAltFunMode;		/*!< possible values from @GPIO_PINAltFunMode >*/
+	uint8_t GPIO_PinMode;			//!< possible values from @GPIO_PIN_MODES >
+	uint8_t GPIO_PinSpeed;			//!< possible values from @GPIO_PIN_SPEED >
+	uint8_t GPIO_PinPuPdControl;	//!< possible values from @GPIO_PIN_PU/PD control >
+	uint8_t GPIO_PinOPType;			//!< possible values from @GPIO_PINOPType >
+	uint8_t GPIO_PinAltFunMode;		//!< possible values from @GPIO_PINAltFunMode >
 } GPIO_PinConfig_t;
+
 
 typedef struct {
 	// NOTE: convention p (ptr)
-	GPIO_RegDef_t *pGPIOx; /*Holds base address of GPIO port (A-H)*/
-	GPIO_PinConfig_t GPIO_PinConfig; /*Holds base address of GPIO port (A-H)*/
+	GPIO_RegDef_t *pGPIOx; // holds base address of GPIO port (A-H)
+	GPIO_PinConfig_t GPIO_PinConfig; // Holds base address of GPIO port (A-H)
 } GPIO_Handle_t;
 
 
-/*
- * GPIO_BASEADDR_TO_CODE
- * */
+// GPIO_BASEADDR_TO_CODE
 
 #define GPIO_BASEADDR_TO_CODE(x)	(x == GPIOA) ? 0:  \
 									(x == GPIOB) ? 1:  \
@@ -31,11 +30,9 @@ typedef struct {
 									(x == GPIOG) ? 6:  \
 									(x == GPIOH) ? 7:0 \
 
+// @GPIO_PIN_NUMBERS
+// GPIO pin numbers
 
-/*
- * @GPIO_PIN_NUMBERS
- * GPIO pin numbers
- */
 #define GPIO_PIN_NO_0  				0
 #define GPIO_PIN_NO_1  				1
 #define GPIO_PIN_NO_2  				2
@@ -53,7 +50,7 @@ typedef struct {
 #define GPIO_PIN_NO_14 				14
 #define GPIO_PIN_NO_15 				15
 
-/* GPIO possible modes */
+// GPIO possible modes
 #define GPIO_MODE_IN 		0 	// Input
 #define GPIO_MODE_OUT 		1	// Output
 #define GPIO_MODE_ALTFN 	2	// Alternate function
@@ -63,30 +60,32 @@ typedef struct {
 #define GPIO_MODE_IT_RFT	6	// Both falling and rising edge interrupt
 
 
-/* GPIO possible output types PP/OD */
+// GPIO possible output types PP/OD
 #define GPIO_OP_TYPE_PP		0 // Push pull no floating
 #define GPIO_OP_TYPE_OD		1 // Open drain: floating when not pulled to ground
 
-/* GPIO possible speeds */
+// GPIO possible speeds
 #define GPIO_SPEED_LOW 		0
 #define GPIO_SPEED_MEDIUM	1
 #define GPIO_SPEED_FAST		2
 #define GPIO_SPEED_HIHG		3
 
-/* GPIO pull up down */
+// GPIO pull up down
 #define GPIO_NO_PUPD		0
 #define GPIO_PIN_PU			1
 #define GPIO_PIN_PD			2
 
+
 /******** Driver API's **********/
-/* Peripheral clock setup */
+
+// Peripheral clock setup
 void GPIO_PeriClockControl(GPIO_RegDef_t *pGpiox, uint8_t EnOrDi);
 
-/* Initialization / deinitialization */
+// Initialization / deinitialization
 void GPIO_Init(GPIO_Handle_t *pGPIOHandle);
-void GPIO_DeInit(GPIO_RegDef_t *pGpiox); /*Use the RCC reset register*/
+void GPIO_DeInit(GPIO_RegDef_t *pGpiox); //Use the RCC reset register
 
-/*Data reading / Writing*/
+// Data reading / Writing
 uint8_t GPIO_ReadFromInputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
 uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t *pGPIOx);
 
@@ -95,8 +94,9 @@ void GPIO_WriteToOutputPort(GPIO_RegDef_t *pGPIOx, uint16_t Value); // 16 pins i
 
 void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
 
-void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t EnorDi);
-void GPIO_IRQHandling(uint8_t PinNumber);
+void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t EnorDi);
+void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority);
+void GPIO_IRQHandler(uint8_t PinNumber);
 
 
 #endif

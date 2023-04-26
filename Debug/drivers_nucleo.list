@@ -27,23 +27,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 0000002a  00000000  00000000  00010804  2**0
                   CONTENTS, READONLY
- 12 .debug_info   000009c8  00000000  00000000  0001082e  2**0
+ 12 .debug_info   00000a97  00000000  00000000  0001082e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00000264  00000000  00000000  000111f6  2**0
+ 13 .debug_abbrev 00000275  00000000  00000000  000112c5  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 000000a8  00000000  00000000  00011460  2**3
+ 14 .debug_aranges 000000c0  00000000  00000000  00011540  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_ranges 00000080  00000000  00000000  00011508  2**3
+ 15 .debug_ranges 00000098  00000000  00000000  00011600  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  0000230c  00000000  00000000  00011588  2**0
+ 16 .debug_macro  0000245f  00000000  00000000  00011698  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   00000f64  00000000  00000000  00013894  2**0
+ 17 .debug_line   00001066  00000000  00000000  00013af7  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    00009593  00000000  00000000  000147f8  2**0
+ 18 .debug_str    00009dcf  00000000  00000000  00014b5d  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000050  00000000  00000000  0001dd8b  2**0
+ 19 .comment      00000050  00000000  00000000  0001e92c  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  000001d4  00000000  00000000  0001dddc  2**2
+ 20 .debug_frame  0000024c  00000000  00000000  0001e97c  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -77,10 +77,10 @@ Disassembly of section .text:
  8000200:	080007e4 	.word	0x080007e4
 
 08000204 <delay>:
-#include <stdlib.h>
 #include <string.h>
 #include "stm32f446xx.h"
 #include "stm32f446xx_gpio_driver.h"
+#include "stm32f446xx_spi_driver.h"
 
 void delay(void) {
  8000204:	b480      	push	{r7}
@@ -112,12 +112,16 @@ void delay(void) {
 08000230 <main>:
 
 
+// Initialize SPI to the pins that you can find
+
 int main() {
  8000230:	b580      	push	{r7, lr}
  8000232:	b084      	sub	sp, #16
  8000234:	af00      	add	r7, sp, #0
 	// NOTE: PC13 is the button
 	// PB13
+
+
 	GPIO_Handle_t GPIOled;
 	GPIOled.GPIO_PinConfig.GPIO_PinNumber = 13;
  8000236:	230d      	movs	r3, #13
@@ -508,9 +512,9 @@ void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnorDi) {
  800045c:	48001c00 	.word	0x48001c00
 
 08000460 <GPIO_Init>:
+ * @return            -  none
  *
  * @Note              -  none
-
  */
 
 void GPIO_Init(GPIO_Handle_t *pGPIOHandle) {
@@ -519,7 +523,7 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle) {
  8000464:	af00      	add	r7, sp, #0
  8000466:	6078      	str	r0, [r7, #4]
 	uint32_t temp;
-	// 1. Configure mode of pin (interrupt vs non-interrupt)
+	// 1. Configure mode of pin (interrupt vs no-interrupt)
 	if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode <= GPIO_MODE_ANALOG) {
  8000468:	687b      	ldr	r3, [r7, #4]
  800046a:	795b      	ldrb	r3, [r3, #5]
@@ -769,7 +773,6 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle) {
  800062c:	4a4f      	ldr	r2, [pc, #316]	; (800076c <GPIO_Init+0x30c>)
  800062e:	430b      	orrs	r3, r1
  8000630:	6013      	str	r3, [r2, #0]
-
 	}
 
 	// 2. Configure speed
@@ -844,7 +847,7 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle) {
  80006b0:	60da      	str	r2, [r3, #12]
 
 	// 4. Configure OPtype
-	// Leftshift by 1 per pinnumber
+	// Leftshift by 1 per pin Number
 	temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinOPType << (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber));
  80006b2:	687b      	ldr	r3, [r7, #4]
  80006b4:	7a1b      	ldrb	r3, [r3, #8]
@@ -884,9 +887,9 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle) {
  80006f0:	795b      	ldrb	r3, [r3, #5]
  80006f2:	2b02      	cmp	r3, #2
  80006f4:	d131      	bne.n	800075a <GPIO_Init+0x2fa>
-		 * configure alternate functionality
-		 * Check the functionalities available with respect to the AF and the pin number
-		 * */
+		 // configure alternate functionality
+		 // Check the functionalities available with respect to the AF and the pin number
+
 
 		// 0/1 (which special register)
 		uint8_t temp1 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber/8;
@@ -950,11 +953,11 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle) {
  800076c:	40010400 	.word	0x40010400
 
 08000770 <GPIO_ToggleOutputPin>:
- *
  * @return            - none
  *
  * @Note              - Changes output state of the GPIO pin
  */
+
 void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber) {
  8000770:	b480      	push	{r7}
  8000772:	b083      	sub	sp, #12
