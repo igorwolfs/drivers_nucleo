@@ -95,6 +95,8 @@ typedef struct {
 #define SPI_BUSY_IN_TX		2
 
 
+
+
 /******** Driver API's **********/
 //-- Peripheral clock setup --//
 void SPI_PeriClockControl(SPI_RegDef_t *pSPIx, uint8_t EnorDi);

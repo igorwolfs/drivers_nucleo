@@ -1,22 +1,23 @@
+#ifndef INC_STM32F446XX_I2C_DRIVER_H_
+#define INC_STM32F446XX_I2C_DIRVER_H_
+
 #include "stm32f446xx.h"
+#include "stm32f446xx_rcc_driver.h"
 
 /*
  * Configuration structure for I2Cx peripheral
  */
-typedef struct
-{
+typedef struct {
 	uint32_t I2C_SCLSpeed;
 	uint8_t  I2C_DeviceAddress;
 	uint8_t  I2C_AckControl;
 	uint8_t  I2C_FMDutyCycle;
-
-}I2C_Config_t;
+} I2C_Config_t;
 
 /*
  *Handle structure for I2Cx peripheral
  */
-typedef struct
-{
+typedef struct {
 	I2C_RegDef_t 	*pI2Cx;
 	I2C_Config_t 	I2C_Config;
 	uint8_t 		*pTxBuffer; // !< To store the app. Tx buffer address >
@@ -27,8 +28,21 @@ typedef struct
 	uint8_t 		DevAddr;	// !< To store slave/device address >
     uint32_t        RxSize;		// !< To store Rx size  >
     uint8_t         Sr;			// !< To store repeated start value  >
-}I2C_Handle_t;
+} I2C_Handle_t;
 
+///////////// MACRO's ////////////
+/// SPEED
+#define I2C_SCL_SPEED_SM 	100000
+#define I2C_SCL_SPEED_FM4K	400000
+#define I2C_SCL_SPEED_FM2K	200000
+
+/// I2C AckControl
+#define I2C_ACK_ENABLE		1
+#define I2C_ACK_DISABLE		0
+
+/// I2C FMDutyCycle
+#define I2C_FM_DUTY_2		0
+#define I2C_FM_DUTY_16_9	1
 
 /******************************************************************************************
  *								APIs supported by this driver
@@ -72,7 +86,6 @@ void I2C_ER_IRQHandling(I2C_Handle_t *pI2CHandle);
 
 
 // Other Peripheral Control APIs
-
 void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnOrDi);
 uint8_t I2C_GetFlagStatus(I2C_RegDef_t *pI2Cx , uint32_t FlagName);
 void I2C_ManageAcking(I2C_RegDef_t *pI2Cx, uint8_t EnorDi);
@@ -86,4 +99,3 @@ void I2C_SlaveEnableDisableCallbackEvents(I2C_RegDef_t *pI2Cx,uint8_t EnorDi);
 void I2C_ApplicationEventCallback(I2C_Handle_t *pI2CHandle,uint8_t AppEv);
 
 #endif
-

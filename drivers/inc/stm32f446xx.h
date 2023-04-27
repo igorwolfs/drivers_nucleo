@@ -176,8 +176,7 @@ typedef struct
 /*
  * peripheral register definition structure for SPI
  */
-typedef struct
-{
+typedef struct {
 	__vo uint32_t CR1;       /*	*/
 	__vo uint32_t CR2;       /*	*/
 	__vo uint32_t SR;        /*	*/
@@ -222,6 +221,9 @@ typedef struct {
 #define SPI2		((SPI_RegDef_t*) 	SPI2_BASEADDR)
 #define SPI3		((SPI_RegDef_t*) 	SPI3_BASEADDR)
 
+#define I2C1		((I2C_RegDef_t*) 	I2C1_BASEADDR)
+#define I2C2		((I2C_RegDef_t*) 	I2C2_BASEADDR)
+#define I2C3		((I2C_RegDef_t*) 	I2C3_BASEADDR)
 
 /* ---------- RCC MACRO's ---------- */
 /****** Clock enable MACRO's *******/
@@ -308,6 +310,12 @@ typedef struct {
 #define GPIOG_REG_RESET()		do {(RCC->AHB2RSTR|=(1 << 6));	((RCC->AHB2RSTR) &= ~(1 << 6));} while(0)
 #define GPIOH_REG_RESET()		do {(RCC->AHB2RSTR|=(1 << 7));	((RCC->AHB2RSTR) &= ~(1 << 7));} while(0)
 
+// I2C Reset
+#define I2C1_REG_RESET()		do {(RCC->APB1STR[0]|= (1 << 21));	((RCC->APB1STR[0]) &= ~(1 << 21));} while(0)
+#define I2C2_REG_RESET()		do {(RCC->APB1STR[0]|= (1 << 22));	((RCC->APB1STR[0]) &= ~(1 << 21));} while(0)
+#define I2C3_REG_RESET()		do {(RCC->APB1STR[0]|= (1 << 23));	((RCC->APB1STR[0]) &= ~(1 << 21));} while(0)
+#define I2C4_REG_RESET()		do {(RCC->APB1STR[1]|= (1 << 1));	((RCC->APB1STR[1]) &= ~(1 << 21));} while(0)
+
 // SPI Set and reset: so first set the bit to 1, then set to 0
 #define SPI1_REG_RESET()	do {(RCC->APB2RSTR |= (1 << 12)); ((RCC->APB2RSTR) &= (~( 1 << 12 )));} while(0)
 #define SPI2_REG_RESET()	do {(RCC->APB1RSTR[0] |= (1 << 14)); (RCC->APB1RSTR[0] &= ~(1 << 14));} while(0)
@@ -367,6 +375,66 @@ typedef struct {
 #define SPI_SR_OVR					 	6
 #define SPI_SR_BSY					 	7
 #define SPI_SR_FRE					 	8
+
+/******* Bit position definitions of I2C peripheral ********/
+/******* BitFields configuration ********/
+
+// Bit position definitions I2C_SR
+#define I2C_ISR_TXE 					0 // Transmit data register empty
+#define I2C_ISR_TXIS 					1 // Transmit interrupt status
+#define I2C_ISR_RXNE 					2 // Receive data register not empty
+#define I2C_ISR_ADDR 				 	3 // Address matched
+#define I2C_ISR_NACKF 					4 // Not Acknowledge received flag
+#define I2C_ISR_STOPF 					5 // Stop detection flag
+#define I2C_ISR_TC	 					6 // Transfer Complete
+#define I2C_ISR_TCR	 					7 // Transfer Complete Reload
+#define I2C_ISR_BERR 					8 // Bus error
+#define I2C_ISR_ARLO 					9 // Arbitration lost
+#define I2C_ISR_OVR 					10 // Overrun / Underrun
+#define I2C_ISR_PECERR 					11 // PEC Error in exception
+#define I2C_ISR_TIMEOUT 				12 // timeout detection tlow flag
+#define I2C_ISR_ALERT	 				13 // SMBus alert
+#define I2C_ISR_BUSY	 				15 // SMBus alert
+
+// Bit position definitions I2C_CR1
+#define I2C_CR1_PE						0
+#define I2C_CR1_TXIE					1
+#define I2C_CR1_RXIE					2
+#define I2C_CR1_ADDRIE					3
+#define I2C_CR1_ERROE					7
+
+// Bit position definitions I2C_CR2
+#define I2C_CR2_START					13
+#define I2C_CR2_STOP					14
+#define I2C_CR2_NACK					15
+#define I2C_CR2_RELOAD					24
+
+
+// Bit position definitions I2C_TIMINGR
+#define I2C_TIMINGR_SCLL				0 	// Low period (in master mode)
+#define I2C_TIMINGR_SCLH				8	// High period (in master mode)
+#define I2C_TIMINGR_SDADEL				16	// Data hold time (delay between SCL falling and SDA edge)
+#define I2C_TIMINGR_SCLDEL				20	// Data setup time (Data setup time)
+#define I2C_TIMINGR_PRESC				28	// Used to pre-scale the I2CCLK
+
+// Bit position definitions in own address 1 OAR1
+#define I2C_OAR1_OA1EN					15
+#define I2C_OAR1_OA17bit				1
+#define I2C_OAR1_OA1MODE				10
+
+// Bit position definitions in own address 1 OAR2
+#define I2C_OAR2_OA2EN					15
+#define I2C_OAR2_OA2					1
+#define I2C_OAR2_OA2MODE				10
+
+/******* Bit position definitions of RCC peripheral ********/
+/******* BitFields configuration ********/
+
+// CFG Register
+#define RCC_CFGR_SWS					2
+#define RCC_CFGR_HPRE					4 // AHB Prescaler
+#define RCC_CFGR_PPRE1					8 // APB1 Prescaler
+#define RCC_CFGR_PPRE2					11 // APB2 Prescaler
 
 
 #endif	/* INC_STM32F446_H_ */
