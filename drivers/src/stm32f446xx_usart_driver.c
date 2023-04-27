@@ -220,7 +220,7 @@ void USART_ReceiveData(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_
 			pRxBuffer++;
 		}
 	}
-
+	USART_SetBaudRate();
 }
 
 /*********************************************************************
@@ -249,12 +249,10 @@ uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle,uint8_t *pTxBuffer, uint32
 		pUSARTHandle->TxBusyState = USART_BUSY_IN_TX;
 
 		//Implement the code to enable interrupt for TXE
-		//TODO
-
+		pUSARTHandle->pUSARTx->CR1 |= (1 << USART_CR1_TXEIE);
 
 		//Implement the code to enable interrupt for TC
-		//TODO
-
+		pUSARTHandle->pUSARTx->CR1 |= (1 << USART_CR1_TCIE);
 
 	}
 
@@ -288,7 +286,7 @@ uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle,uint8_t *pRxBuffer, uin
 		pUSARTHandle->RxBusyState = USART_BUSY_IN_RX;
 
 		//Implement the code to enable interrupt for RXNE
-		//TODO
+		pUSARTHandle->pUSARTx->CR1 |= (1 << USART_CR1_RXNEIE);
 
 	}
 
