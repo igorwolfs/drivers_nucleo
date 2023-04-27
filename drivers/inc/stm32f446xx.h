@@ -180,7 +180,7 @@ typedef struct {
 	__vo uint32_t CR1;       /*	*/
 	__vo uint32_t CR2;       /*	*/
 	__vo uint32_t SR;        /*	*/
-	__vo uint32_t DR;    /* Decides on the port that takes over the interrupt line. (15 lines)	*/
+	__vo uint32_t DR;   	 /* Decides on the port that takes over the interrupt line. (15 lines)	*/
 	__vo uint32_t CRCPR;  		/*	*/
 	__vo uint32_t RXCRCR;        /*  */
 	__vo uint32_t TXCRCR;  		/*  */
@@ -199,7 +199,22 @@ typedef struct {
   __vo uint32_t ICR;
   __vo uint32_t PECR;
   __vo uint32_t RXDR;
-}I2C_RegDef_t;
+} I2C_RegDef_t;
+
+
+typedef struct {
+	__vo uint32_t CR1;
+	__vo uint32_t CR2;
+	__vo uint32_t CR3;
+	__vo uint32_t BRR;
+	__vo uint32_t GTPR;
+	__vo uint32_t RTGR;
+	__vo uint32_t RQR;
+	__vo uint32_t ISR;
+	__vo uint32_t ICR;
+	__vo uint32_t RDR;
+	__vo uint32_t TDR;
+} USART_RegDef_t;
 
 /* ---------------- peripheral definitions ---------------- */
 #define GPIOA 		((GPIO_RegDef_t*)GPIOA_BASEADDR)
@@ -224,6 +239,10 @@ typedef struct {
 #define I2C1		((I2C_RegDef_t*) 	I2C1_BASEADDR)
 #define I2C2		((I2C_RegDef_t*) 	I2C2_BASEADDR)
 #define I2C3		((I2C_RegDef_t*) 	I2C3_BASEADDR)
+
+#define USART1		((USART_RegDef_t*) 	USART1_BASEADDR)
+#define USART2		((USART_RegDef_t*) 	USART2_BASEADDR)
+#define USART3		((USART_RegDef_t*) 	USART3_BASEADDR)
 
 /* ---------- RCC MACRO's ---------- */
 /****** Clock enable MACRO's *******/
@@ -358,6 +377,7 @@ typedef struct {
 #define SPI_CR1_CPOL			1
 #define SPI_CR1_CPHA			0
 
+
 /*SPI	CR2*/
 #define SPI_CR2_RXDMAEN		 			0
 #define SPI_CR2_TXDMAEN				 	1
@@ -366,6 +386,7 @@ typedef struct {
 #define SPI_CR2_ERRIE					5
 #define SPI_CR2_RXNEIE				 	6
 #define SPI_CR2_TXEIE					7
+
 
 /*SPI	SR*/
 #define SPI_SR_RXNE						0
@@ -378,6 +399,7 @@ typedef struct {
 
 /******* Bit position definitions of I2C peripheral ********/
 /******* BitFields configuration ********/
+
 
 // Bit position definitions I2C_SR
 #define I2C_ISR_TXE 					0 // Transmit data register empty
@@ -396,6 +418,7 @@ typedef struct {
 #define I2C_ISR_ALERT	 				13 // SMBus alert
 #define I2C_ISR_BUSY	 				15 // SMBus alert
 
+
 // Bit position definitions I2C_CR1
 #define I2C_CR1_PE						0
 #define I2C_CR1_TXIE					1
@@ -403,10 +426,12 @@ typedef struct {
 #define I2C_CR1_ADDRIE					3
 #define I2C_CR1_ERROE					7
 
+
 // Bit position definitions I2C_CR2
 #define I2C_CR2_START					13
 #define I2C_CR2_STOP					14
 #define I2C_CR2_NACK					15
+#define I2C_CR2_NBYTES					16
 #define I2C_CR2_RELOAD					24
 
 
@@ -426,6 +451,93 @@ typedef struct {
 #define I2C_OAR2_OA2EN					15
 #define I2C_OAR2_OA2					1
 #define I2C_OAR2_OA2MODE				10
+
+
+// I2C flag creation
+#define I2C_ISR_DIR 					16
+#define I2C_ISR_BUSY					15
+#define I2C_ISR_TIMEOUT					12	// Timeout / extended clock timeout occurred
+#define I2C_ISR_PECERR					11
+#define I2C_ISR_OVR						10
+#define I2C_ISR_ARLO					9
+#define I2C_ISR_BERR					8
+#define I2C_ISR_TCR						7
+#define I2C_ISR_TC						6 	// Transfer complete (master flag)
+#define I2C_ISR_STOPF					5 	// Stop detection flag
+#define I2C_ISR_NACKF					4 	// Not acknowledge received flag
+#define I2C_ISR_ADDR					3 	// Address matched (slave mode)
+#define I2C_ISR_RXNE					2	// Receive data register not empty
+#define I2C_ISR_TXIS					1	// Set when TXDR is empty and data must be written inTXDR
+#define I2C_ISR_TXE						0	// Set when TXDR is empty and next data is put in TXDR
+
+
+/******* Bit position definitions of USART peripheral ********/
+/******* BitFields configuration ********/
+
+
+
+// Bit position definitions USART_CR1
+#define USART_CR1_UE 					0
+#define USART_CR1_UESM 					1
+#define USART_CR1_RE  					2
+#define USART_CR1_TE 					3
+#define USART_CR1_IDLEIE 				4
+#define USART_CR1_RXNEIE  				5
+#define USART_CR1_TCIE					6
+#define USART_CR1_TXEIE					7
+#define USART_CR1_PEIE 					8
+#define USART_CR1_PS 					9
+#define USART_CR1_PCE 					10
+#define USART_CR1_WAKE  				11
+#define USART_CR1_M0 					12
+#define USART_CR1_OVER8  				15
+#define USART_CR1_M1 					28
+
+
+
+
+// Bit position definitions USART_CR2
+
+#define USART_CR2_ADD   				0
+#define USART_CR2_LBDL   				5
+#define USART_CR2_LBDIE  				6
+#define USART_CR2_LBCL   				8
+#define USART_CR2_CPHA   				9
+#define USART_CR2_CPOL   				10
+#define USART_CR2_STOP   				12
+#define USART_CR2_LINEN   				14
+
+
+
+// Bit position definitions USART_CR3
+
+#define USART_CR3_EIE   				0
+#define USART_CR3_IREN   				1
+#define USART_CR3_IRLP  				2
+#define USART_CR3_HDSEL   				3
+#define USART_CR3_NACK   				4
+#define USART_CR3_SCEN   				5
+#define USART_CR3_DMAR  				6
+#define USART_CR3_DMAT   				7
+#define USART_CR3_RTSE   				8
+#define USART_CR3_CTSE   				9
+#define USART_CR3_CTSIE   				10
+#define USART_CR3_ONEBIT   				11
+
+
+// Bit position definitions USART_SR
+
+#define USART_SR_PE        				0
+#define USART_SR_FE        				1
+#define USART_SR_NE        				2
+#define USART_SR_ORE       				3
+#define USART_SR_IDLE       			4
+#define USART_SR_RXNE        			5
+#define USART_SR_TC        				6
+#define USART_SR_TXE        			7
+#define USART_SR_LBD        			8
+#define USART_SR_CTS        			9
+
 
 /******* Bit position definitions of RCC peripheral ********/
 /******* BitFields configuration ********/

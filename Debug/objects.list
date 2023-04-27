@@ -6,3 +6,4 @@
 "./drivers/src/stm32f446xx_i2c_driver.o"
 "./drivers/src/stm32f446xx_rcc_driver.o"
 "./drivers/src/stm32f446xx_spi_driver.o"
+"./drivers/src/stm32f446xx_usart_driver.o"
