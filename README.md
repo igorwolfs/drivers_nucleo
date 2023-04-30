@@ -1,6 +1,6 @@
-### Bare-Metal Driver for I2C, SPI, UART, and GPIO on Nucleo Board
+## Bare-Metal Driver for I2C, SPI, UART, and GPIO on Nucleo Board
 
-Description:
+### Description:
 This is a Github repository for an embedded software project that aims to develop bare-metal drivers for I2C, SPI, UART, and GPIO on the Nucleo development board. The project is primarily intended to showcase the developer's skills and expertise in low-level programming.
 
 The project is developed using the ARM Cortex-M architecture without making use of the CMSIS (Cortex Microcontroller Software Interface Standard) library provided by STMicroelectronics.
